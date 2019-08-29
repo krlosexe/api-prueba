@@ -29,7 +29,14 @@ header('Access-Control-Allow-Origin: *');
 			$controllerName = studlyCase( $requestURI[1] );
 			$controllerPath = CONTROLLER_PATH . $controllerName . EXT;
 			// Guardamos el nombre del método a llamar.
-			$method = $controllerName . '::'. strtolower( $_SERVER['REQUEST_METHOD'] )  . studlyCase( $requestURI[2]);
+
+			if (strtolower( $_SERVER['REQUEST_METHOD'] ) == "put") {
+				$method = $controllerName . '::'. "edit";
+			}else if (strtolower( $_SERVER['REQUEST_METHOD'] ) == "delete") {
+				$method = $controllerName . '::'. "delete";
+			}else{
+				$method = $controllerName . '::'. strtolower( $_SERVER['REQUEST_METHOD'] )  . studlyCase( $requestURI[2]);
+			}
 
 
 			// Eliminamos el controlador y el método de
@@ -51,7 +58,7 @@ header('Access-Control-Allow-Origin: *');
 
 			// Comprobamos que el método definido en la URL esté disponible.
 			if ( ! is_callable( $method ) ) {
-				throw new DomainException( 'El archivo <code>' . $controllerPath . '</code> no contiene un método <code>' . strtolower( $_SERVER['REQUEST_METHOD'] )  .$requestURI[2] . '</code>.', 404 );
+				throw new DomainException( 'El archivo <code>' . $controllerPath . '</code> no contiene un método <code>' . $method  . '</code>.', 404 );
 			}
 
 			// Creamos un nuevo método reflejo de $method.
